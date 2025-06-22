@@ -1,110 +1,127 @@
+from typing import Any, Optional
 
-class nodoPila:
-    def __init__(self, info):
-        self.info = info
-        self.sig = None
+class Stack:
 
-class pila:
     def __init__(self):
-        self.cima = None
-        self.tamanio = 0
+        self.__elements = []
 
-def apilar(p, dato):
-    nodo = nodoPila(dato)
-    nodo.sig = p.cima
-    p.cima = nodo
-    p.tamanio += 1
+    def push(self, value: Any) -> None:
+        self.__elements.append(value)
 
-def desapilar(p):
-    if p.cima is not None:
-        dato = p.cima.info
-        p.cima = p.cima.sig
-        p.tamanio -= 1
-        return dato
+    def pop(self) -> Optional[Any]:
+        return (
+            self.__elements.pop()
+            if self.__elements
+            else None
+        )
 
-def pila_vacia(p):
-    return p.cima is None
+    def size(self) -> int:
+        return len(self.__elements)
 
-def copiar_pila(p):
-    aux = pila()
-    copia = pila()
-    while not pila_vacia(p):
-        dato = desapilar(p)
-        apilar(aux, dato)
-    while not pila_vacia(aux):
-        dato = desapilar(aux)
-        apilar(p, dato)
-        apilar(copia, dato)
-    return copia
+    def on_top(self) -> Optional[Any]:
+        return (
+            self.__elements[-1]
+            if self.__elements
+            else None
+        )
 
-def buscar_posiciones(p, nombres_objetivo):
-    copia = copiar_pila(p)
-    posicion = 1
+    def show(self):
+        aux_stack = Stack()
+        while self.size() > 0:
+            value = self.pop()
+            print(value)
+            aux_stack.push(value)
+        while aux_stack.size() > 0:
+            self.push(aux_stack.pop())
+
+def cargar_personajes():
+    stack = Stack()
+    personajes = [
+        {'name': 'Iron Man', 'movies': 10},
+        {'name': 'Captain America', 'movies': 9},
+        {'name': 'Thor', 'movies': 8},
+        {'name': 'Black Widow', 'movies': 7},
+        {'name': 'Hulk', 'movies': 6},
+        {'name': 'Hawkeye', 'movies': 5},
+        {'name': 'Groot', 'movies': 4},
+        {'name': 'Doctor Strange', 'movies': 5},
+        {'name': 'Gamora', 'movies': 4},
+        {'name': 'Rocket Raccoon', 'movies': 4},
+        {'name': 'Drax', 'movies': 4},
+        {'name': 'Captain Marvel', 'movies': 3},
+    ]
+    for p in personajes:
+        stack.push(p)
+    return stack
+
+def posiciones(stack, nombres):
+    aux = Stack()
     posiciones = {}
-    while not pila_vacia(copia):
-        personaje = desapilar(copia)
-        if personaje['nombre'] in nombres_objetivo and personaje['nombre'] not in posiciones:
-            posiciones[personaje['nombre']] = posicion
-        posicion += 1
+    pos = 1
+    while stack.size() > 0:
+        p = stack.pop()
+        if p['name'] in nombres:
+            posiciones[p['name']] = pos
+        aux.push(p)
+        pos += 1
+    while aux.size() > 0:
+        stack.push(aux.pop())
+    return posiciones
 
-    for nombre in nombres_objetivo:
-        if nombre in posiciones:
-            print(f"{nombre} está en la posición {posiciones[nombre]} desde la cima de la pila.")
-        else:
-            print(f"{nombre} no se encuentra en la pila.")
+def mas_de_n_peliculas(stack, n):
+    aux = Stack()
+    resultado = []
+    while stack.size() > 0:
+        p = stack.pop()
+        if p['movies'] > n:
+            resultado.append(p)
+        aux.push(p)
+    while aux.size() > 0:
+        stack.push(aux.pop())
+    return resultado
 
-# Función para determinar personajes con más de 5 películas
-def personajes_mas_de_5(p):
-    copia = copiar_pila(p)
-    print("\nPersonajes que participaron en más de 5 películas:")
-    while not pila_vacia(copia):
-        personaje = desapilar(copia)
-        if personaje['peliculas'] > 5:
-            print(f"- {personaje['nombre']} participó en {personaje['peliculas']} películas.")
+def contar_peliculas(stack, nombre):
+    aux = Stack()
+    cantidad = 0
+    while stack.size() > 0:
+        p = stack.pop()
+        if p['name'] == nombre:
+            cantidad = p['movies']
+        aux.push(p)
+    while aux.size() > 0:
+        stack.push(aux.pop())
+    return cantidad
 
-# Función para contar en cuántas películas participó Black Widow
-def peliculas_black_widow(p):
-    copia = copiar_pila(p)
-    while not pila_vacia(copia):
-        personaje = desapilar(copia)
-        if personaje['nombre'] == 'Black Widow':
-            print(f"Black Widow participó en {personaje['peliculas']} películas.")
-            return
-    print("Black Widow no se encuentra en la pila.")
+def nombres_por_inicial(stack, iniciales):
+    aux = Stack()
+    seleccionados = []
+    while stack.size() > 0:
+        p = stack.pop()
+        if p['name'].startswith(tuple(iniciales)):
+            seleccionados.append(p['name'])
+        aux.push(p)
+    while aux.size() > 0:
+        stack.push(aux.pop())
+    return seleccionados
 
-# Función para mostrar personajes cuyos nombres empiezan con C, D y G
-def personajes_iniciales_cd_g(p):
-    copia = copiar_pila(p)
-    print("\nPersonajes cuyos nombres empiezan con C, D y G:")
-    while not pila_vacia(copia):
-        personaje = desapilar(copia)
-        if personaje['nombre'][0] in ['C', 'D', 'G']:
-            print(f"- {personaje['nombre']} participó en {personaje['peliculas']} películas.")
+stack_mcu = cargar_personajes()
 
+print("a) Posiciones de Rocket Raccoon y Groot desde la cima:")
+resultado_a = posiciones(stack_mcu, ["Rocket Raccoon", "Groot"])
+for nombre in ["Rocket Raccoon", "Groot"]:
+    print(f"{nombre}: posición {resultado_a.get(nombre, 'no encontrado')}")
 
-p = pila()
-apilar(p, {'nombre': 'Iron Man', 'peliculas': 10})
-apilar(p, {'nombre': 'Captain America', 'peliculas': 9})
-apilar(p, {'nombre': 'Black Widow', 'peliculas': 8})
-apilar(p, {'nombre': 'Hulk', 'peliculas': 7})
-apilar(p, {'nombre': 'Thor', 'peliculas': 8})
-apilar(p, {'nombre': 'Hawkeye', 'peliculas': 6})
-apilar(p, {'nombre': 'Doctor Strange', 'peliculas': 3})
-apilar(p, {'nombre': 'Spider-Man', 'peliculas': 5})
-apilar(p, {'nombre': 'Black Panther', 'peliculas': 4})
-apilar(p, {'nombre': 'Ant-Man', 'peliculas': 4})
-apilar(p, {'nombre': 'Rocket Raccoon', 'peliculas': 4})
-apilar(p, {'nombre': 'Groot', 'peliculas': 4})
-apilar(p, {'nombre': 'Scarlet Witch', 'peliculas': 5})
+print("\nb) Personajes que participaron en más de 5 películas:")
+resultado_b = mas_de_n_peliculas(stack_mcu, 5)
+for p in resultado_b:
+    print(f"{p['name']}: {p['movies']} películas")
 
-# Buscar Rocket Raccoon y Groot
-buscar_posiciones(p, ['Rocket Raccoon', 'Groot'])
+print("\nc) Películas en las que participó Black Widow:")
+resultado_c = contar_peliculas(stack_mcu, "Black Widow")
+print(f"Black Widow participó en {resultado_c} películas")
 
-# Determinar personajes con más de 5 películas
-personajes_mas_de_5(p)
+print("\nd) Personajes cuyos nombres empiezan con C, D o G:")
+resultado_d = nombres_por_inicial(stack_mcu, ["C", "D", "G"])
+for nombre in resultado_d:
+    print(nombre)
 
-# Determinar cuántas películas participó Black Widow
-peliculas_black_widow(p)
-
-# Mostrar personajes cuyos nombres empiezan con C, D y G
-personajes_iniciales_cd_g(p)
