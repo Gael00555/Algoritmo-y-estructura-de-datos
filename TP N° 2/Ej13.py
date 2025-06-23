@@ -1,172 +1,157 @@
+from typing import Any, Optional
 
-class nodoPila:
-    def __init__(self, info):
-        self.info = info
-        self.sig = None
+class Stack:
 
-class pila:
     def __init__(self):
-        self.cima = None
-        self.tamanio = 0
+        self.__elements = []
 
-def apilar(p, dato):
-    nodo = nodoPila(dato)
-    nodo.sig = p.cima
-    p.cima = nodo
-    p.tamanio += 1
+    def push(self, value: Any) -> None:
+        self.__elements.append(value)
 
-def desapilar(p):
-    if p.cima is not None:
-        dato = p.cima.info
-        p.cima = p.cima.sig
-        p.tamanio -= 1
-        return dato
+    def pop(self) -> Optional[Any]:
+        return (
+            self.__elements.pop()
+            if self.__elements
+            else None
+        )
 
-def pila_vacia(p):
-    return p.cima is None
+    def size(self) -> int:
+        return len(self.__elements)
 
-def copiar_pila(p):
-    aux = pila()
-    copia = pila()
-    while not pila_vacia(p):
-        dato = desapilar(p)
-        apilar(aux, dato)
-    while not pila_vacia(aux):
-        dato = desapilar(aux)
-        apilar(p, dato)
-        apilar(copia, dato)
-    return copia
+    def on_top(self) -> Optional[Any]:
+        return (
+            self.__elements[-1]
+            if self.__elements
+            else None
+        )
 
-def mostrar_traje(traje):
-    print(f"- {traje['modelo']} ({traje['pelicula']}) - Estado: {traje['estado']}")
+    def show(self):
+        aux_stack = Stack()
+        while self.size() > 0:
+            value = self.pop()
+            print(value)
+            aux_stack.push(value)
+        while aux_stack.size() > 0:
+            self.push(aux_stack.pop())
 
-def cargar_datos(p):
-    datos = [
-        {'modelo': 'Mark III', 'pelicula': 'Iron Man', 'estado': 'Dañado'},
-        {'modelo': 'Mark XLIV', 'pelicula': 'Avengers: Age of Ultron', 'estado': 'Dañado'},
-        {'modelo': 'Mark XLII', 'pelicula': 'Iron Man 3', 'estado': 'Destruido'},
-        {'modelo': 'Mark V', 'pelicula': 'Iron Man 2', 'estado': 'Impecable'},
-        {'modelo': 'Mark XLIV', 'pelicula': 'Avengers: Endgame', 'estado': 'Impecable'},
-        {'modelo': 'Mark XLVII', 'pelicula': 'Spider-Man: Homecoming', 'estado': 'Dañado'},
-        {'modelo': 'Mark XLVI', 'pelicula': 'Capitan America: Civil War', 'estado': 'Impecable'},
-        {'modelo': 'Mark L', 'pelicula': 'Avengers: Infinity War', 'estado': 'Destruido'},
-    ]
-    for traje in datos:
-        apilar(p, traje)
 
-# a) Buscar Mark XLIV
-def buscar_mark_xliv(p):
-    copia = copiar_pila(p)
-    peliculas = []
-    while not pila_vacia(copia):
-        traje = desapilar(copia)
+stack_trajes = Stack()
+
+
+trajes = [
+    {'modelo': 'Mark III', 'pelicula': 'Iron Man', 'estado': 'Dañado'},
+    {'modelo': 'Mark V', 'pelicula': 'Iron Man 2', 'estado': 'Destruido'},
+    {'modelo': 'Mark XLII', 'pelicula': 'Iron Man 3', 'estado': 'Dañado'},
+    {'modelo': 'Mark XLIV', 'pelicula': 'Avengers: Age of Ultron', 'estado': 'Dañado'},
+    {'modelo': 'Mark XLVI', 'pelicula': 'Captain America: Civil War', 'estado': 'Impecable'},
+    {'modelo': 'Mark XLVII', 'pelicula': 'Spider-Man: Homecoming', 'estado': 'Impecable'},
+    {'modelo': 'Mark L', 'pelicula': 'Avengers: Infinity War', 'estado': 'Impecable'},
+    {'modelo': 'Mark LXXXV', 'pelicula': 'Avengers: Endgame', 'estado': 'Destruido'},
+]
+
+for traje in trajes:
+    stack_trajes.push(traje)
+
+# A) 
+def buscar_hulkbuster(stack):
+    aux = Stack()
+    peliculas = set()
+    while stack.size() > 0:
+        traje = stack.pop()
         if traje['modelo'] == 'Mark XLIV':
-            peliculas.append(traje['pelicula'])
-    if peliculas:
-        print("Mark XLIV fue usado en:")
-        for peli in peliculas:
-            print(f"- {peli}")
-    else:
-        print("Mark XLIV no fue usado en ninguna película.")
+            peliculas.add(traje['pelicula'])
+        aux.push(traje)
+    while aux.size() > 0:
+        stack.push(aux.pop())
+    return peliculas
 
-# b) Mostrar modelos dañados
-def modelos_daniados(p):
-    copia = copiar_pila(p)
-    daniados = []
-    while not pila_vacia(copia):
-        traje = desapilar(copia)
+# B) 
+def mostrar_danados(stack):
+    aux = Stack()
+    print("Trajes dañados:")
+    while stack.size() > 0:
+        traje = stack.pop()
         if traje['estado'] == 'Dañado':
-            daniados.append(traje)
-    if daniados:
-        print("Modelos dañados:")
-        for t in daniados:
-            mostrar_traje(t)
-    else:
-        print("No hay modelos dañados.")
+            print(traje)
+        aux.push(traje)
+    while aux.size() > 0:
+        stack.push(aux.pop())
 
-# c) Eliminar destruidos
-def eliminar_destruidos(p):
-    aux = pila()
-    destruidos = []
-    while not pila_vacia(p):
-        traje = desapilar(p)
+# C) 
+def eliminar_destruidos(stack):
+    aux = Stack()
+    print("Eliminando trajes destruidos:")
+    while stack.size() > 0:
+        traje = stack.pop()
         if traje['estado'] == 'Destruido':
-            destruidos.append(traje)
+            print(traje)
         else:
-            apilar(aux, traje)
-    while not pila_vacia(aux):
-        apilar(p, desapilar(aux))
-    if destruidos:
-        print("Modelos destruidos eliminados:")
-        for t in destruidos:
-            mostrar_traje(t)
-    else:
-        print("No había modelos destruidos.")
+            aux.push(traje)
+    while aux.size() > 0:
+        stack.push(aux.pop())
 
-# e) Agregar Mark LXXXV si no está repetido
-def agregar_mark_lxxxv(p):
-    modelo = 'Mark LXXXV'
-    pelicula = 'Avengers: Endgame'
-    copia = copiar_pila(p)
+# D)
+def agregar_sin_repetidos(stack, nuevo_traje):
+    aux = Stack()
     repetido = False
-    while not pila_vacia(copia):
-        traje = desapilar(copia)
-        if traje['modelo'] == modelo and traje['pelicula'] == pelicula:
+    while stack.size() > 0:
+        traje = stack.pop()
+        if traje['modelo'] == nuevo_traje['modelo'] and traje['pelicula'] == nuevo_traje['pelicula']:
             repetido = True
-            break
+        aux.push(traje)
+    while aux.size() > 0:
+        stack.push(aux.pop())
     if not repetido:
-        apilar(p, {'modelo': modelo, 'pelicula': pelicula, 'estado': 'Impecable'})
-        print("Se agregó Mark LXXXV (Avengers: Endgame).")
+        stack.push(nuevo_traje)
+        print("Modelo agregado correctamente.")
     else:
-        print("Ya existía Mark LXXXV en Avengers: Endgame.")
-
-# f) Trajes usados en 2 películas
-def trajes_por_peliculas(p):
-    peliculas_obj = ['Spider-Man: Homecoming', 'Capitan America: Civil War']
-    copia = copiar_pila(p)
-    encontrados = []
-    while not pila_vacia(copia):
-        traje = desapilar(copia)
-        if traje['pelicula'] in peliculas_obj:
-            encontrados.append(traje)
-    if encontrados:
-        print("Trajes en Spider-Man: Homecoming y Capitan America: Civil War:")
-        for t in encontrados:
-            mostrar_traje(t)
-    else:
-        print("No se encontraron trajes en esas películas.")
-
-# (Opcional) Menú interactivo
-def menu():
-    p = pila()
-    cargar_datos(p)
-
-    while True:
-        print("\n=== MENU ===")
-        print("1. Buscar Mark XLIV")
-        print("2. Mostrar modelos dañados")
-        print("3. Eliminar modelos destruidos")
-        print("4. Agregar Mark LXXXV")
-        print("5. Mostrar trajes de Spider-Man: Homecoming y Civil War")
-        print("6. Salir")
-
-        opcion = input("Elija una opción: ")
-        if opcion== '1':
-            buscar_mark_xliv(p)
-        elif opcion == '2':
-            modelos_daniados(p)
-        elif opcion == '3':
-            eliminar_destruidos(p)
-        elif opcion == '4':
-            agregar_mark_lxxxv(p)
-        elif opcion == '5':
-            trajes_por_peliculas(p)
-        elif opcion == '6':
-            print("Saliendo...")
-            break
-        else:
-            print("Opción inválida.")
+        print("Ya existe ese modelo en esa película, no se agregó.")
+# E)
+def mostrar_trajes_de_peliculas(stack, peliculas_objetivo):
+    aux = Stack()
+    print("Modelos utilizados en películas seleccionadas:")
+    while stack.size() > 0:
+        traje = stack.pop()
+        if traje['pelicula'] in peliculas_objetivo:
+            print(traje['modelo'])
+        aux.push(traje)
+    while aux.size() > 0:
+        stack.push(aux.pop())
 
 
-menu()
+
+# F)
+peliculas_hulkbuster = buscar_hulkbuster(stack_trajes)
+if peliculas_hulkbuster:
+    print("a) Mark XLIV fue usado en:")
+    for p in peliculas_hulkbuster:
+        print(f"- {p}")
+else:
+    print("a) Mark XLIV no fue encontrado.")
+
+print()
+
+
+print("b)")
+mostrar_danados(stack_trajes)
+print()
+
+
+print("c)")
+eliminar_destruidos(stack_trajes)
+print()
+
+
+print("e)")
+nuevo_traje = {'modelo': 'Mark LXXXV', 'pelicula': 'Avengers: Endgame', 'estado': 'Impecable'}
+agregar_sin_repetidos(stack_trajes, nuevo_traje)
+print()
+
+
+print("f)")
+mostrar_trajes_de_peliculas(stack_trajes, ["Spider-Man: Homecoming", "Captain America: Civil War"])
+
+
+
+
 
