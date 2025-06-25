@@ -1,98 +1,143 @@
-class nodoCola(object):
+from typing import Any, Optional
+
+class Queue:
+
     def __init__(self):
-        self.info = None
-        self.sig = None
+        self.__elements = []
 
-class Cola(object):
-    def __init__(self):
-        self.frente = None
-        self.final = None
-        self.tamanio = 0
+    def arrive(self, value: Any) -> None:
+        self.__elements.append(value)
 
-def arribo(cola, dato):
-    nodo = nodoCola()
-    nodo.info = dato
-    if cola.final is not None:
-        cola.final.sig = nodo
-    else:
-        cola.frente = nodo
-    cola.final = nodo
-    cola.tamanio += 1
+    def attention(self) -> Optional[Any]:
+        return self.__elements.pop(0) if self.__elements else None
 
-def atencion(cola):
-    dato = cola.frente.info
-    cola.frente = cola.frente.sig
-    if cola.frente is None:
-        cola.final = None
-    cola.tamanio -= 1
-    return dato
+    def on_front(self) -> Optional[Any]:
+        return self.__elements[0] if self.__elements else None
 
-def cola_vacia(cola):
-    return cola.frente is None
+    def size(self) -> int:
+        return len(self.__elements)
 
-def en_frente(cola):
-    return cola.frente.info
+    def move_to_end(self) -> Optional[Any]:
+        if self.__elements:
+            value = self.attention()
+            self.arrive(value)
+            return value
 
-# Carga de datos de ejemplo
-cola_mcu = Cola()
-personajes = [
-    {"nombre": "Tony Stark", "superheroe": "Iron Man", "genero": "M"},
-    {"nombre": "Steve Rogers", "superheroe": "Capitán América", "genero": "M"},
-    {"nombre": "Natasha Romanoff", "superheroe": "Black Widow", "genero": "F"},
-    {"nombre": "Carol Danvers", "superheroe": "Capitana Marvel", "genero": "F"},
-    {"nombre": "Scott Lang", "superheroe": "Ant-Man", "genero": "M"},
-    {"nombre": "Stephen Strange", "superheroe": "Doctor Strange", "genero": "M"},
-    {"nombre": "Sam Wilson", "superheroe": "Falcon", "genero": "M"}
+    def show(self):
+        for i in range(len(self.__elements)):
+            print(self.move_to_end())
+
+# Cargar personajes en la cola
+mcu = Queue()
+datos = [
+    {'personaje': 'Tony Stark', 'superheroe': 'Iron Man', 'genero': 'M'},
+    {'personaje': 'Steve Rogers', 'superheroe': 'Capitán América', 'genero': 'M'},
+    {'personaje': 'Natasha Romanoff', 'superheroe': 'Black Widow', 'genero': 'F'},
+    {'personaje': 'Carol Danvers', 'superheroe': 'Capitana Marvel', 'genero': 'F'},
+    {'personaje': 'Wanda Maximoff', 'superheroe': 'Scarlet Witch', 'genero': 'F'},
+    {'personaje': 'Scott Lang', 'superheroe': 'Ant-Man', 'genero': 'M'},
+    {'personaje': 'Stephen Strange', 'superheroe': 'Doctor Strange', 'genero': 'M'},
+    {'personaje': 'Sam Wilson', 'superheroe': 'Falcon', 'genero': 'M'},
 ]
 
-for p in personajes:
-    arribo(cola_mcu, p)
+for p in datos:
+    mcu.arrive(p)
 
-# Procesamiento según lo pedido
-def procesar_actividades(cola):
-    print("Procesando personajes del MCU...\n")
-    cola_aux = Cola()
-    capitana_marvel_encontrada = False
-    carol_danvers_encontrado = False
+# Funciones
 
-    while not cola_vacia(cola):
-        personaje = atencion(cola)
-        
-        
-        if personaje["superheroe"] == "Capitana Marvel":
-            print(f" El nombre real de Capitana Marvel es: {personaje['nombre']}")
-            capitana_marvel_encontrada = True
+def buscar_personaje_por_superheroe(queue, nombre_heroe):
+    aux = Queue()
+    resultado = None
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['superheroe'] == nombre_heroe:
+            resultado = dato['personaje']
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
+    return resultado
 
+def mostrar_superheroes_femeninos(queue):
+    aux = Queue()
+    print("Superhéroes femeninos:")
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['genero'] == 'F':
+            print(dato['superheroe'])
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
 
-        if personaje["genero"] == "F":
-            print(f" Superhéroe femenino encontrado: {personaje['superheroe']}")
+def mostrar_personajes_masculinos(queue):
+    aux = Queue()
+    print("Personajes masculinos:")
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['genero'] == 'M':
+            print(dato['personaje'])
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
 
-       
-        if personaje["genero"] == "M":
-            print(f" Personaje masculino encontrado: {personaje['nombre']}")
+def buscar_superheroe_por_personaje(queue, nombre_personaje):
+    aux = Queue()
+    resultado = None
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['personaje'] == nombre_personaje:
+            resultado = dato['superheroe']
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
+    return resultado
 
-        
-        if personaje["nombre"] == "Scott Lang":
-            print(f" El superhéroe de Scott Lang es: {personaje['superheroe']}")
+def mostrar_nombres_con_S(queue):
+    aux = Queue()
+    print("Datos cuyos nombres (personaje o superhéroe) empiezan con 'S':")
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['personaje'].startswith('S') or dato['superheroe'].startswith('S'):
+            print(dato)
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
 
-        
-        if personaje["nombre"].startswith("S") or personaje["superheroe"].startswith("S"):
-            print(f" Personaje con nombre o superhéroe que comienza con S: {personaje}")
+def verificar_carol_danvers(queue):
+    aux = Queue()
+    encontrado = False
+    heroe = None
+    while queue.size() > 0:
+        dato = queue.attention()
+        if dato['personaje'] == 'Carol Danvers':
+            encontrado = True
+            heroe = dato['superheroe']
+        aux.arrive(dato)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
+    return encontrado, heroe
 
-        
-        if personaje["nombre"] == "Carol Danvers":
-            print(f" Carol Danvers está en la cola. Su nombre de superhéroe es: {personaje['superheroe']}")
-            carol_danvers_encontrado = True
+# Ejecutar
 
-        arribo(cola_aux, personaje)
+print("a) Nombre del personaje de la superhéroe 'Capitana Marvel':")
+resultado_a = buscar_personaje_por_superheroe(mcu, "Capitana Marvel")
+print(resultado_a)
 
-    
-    while not cola_vacia(cola_aux):
-        arribo(cola, atencion(cola_aux))
+print("\nb) Superhéroes femeninos:")
+mostrar_superheroes_femeninos(mcu)
 
-    if not capitana_marvel_encontrada:
-        print("A. Capitana Marvel no se encuentra en la cola.")
-    if not carol_danvers_encontrado:
-        print("F. Carol Danvers no se encuentra en la cola.")
+print("\nc) Personajes masculinos:")
+mostrar_personajes_masculinos(mcu)
 
-procesar_actividades(cola_mcu) 
+print("\nd) Nombre del superhéroe de Scott Lang:")
+resultado_d = buscar_superheroe_por_personaje(mcu, "Scott Lang")
+print(resultado_d)
+
+print("\ne) Datos cuyos nombres comienzan con S:")
+mostrar_nombres_con_S(mcu)
+
+print("\nf) ¿Carol Danvers está en la cola?")
+encontrado, heroe = verificar_carol_danvers(mcu)
+if encontrado:
+    print(f"Sí, su superhéroe es: {heroe}")
+else:
+    print("No se encontró a Carol Danvers.")
