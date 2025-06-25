@@ -1,113 +1,118 @@
-class Cola:
+from typing import Any, Optional
+
+class Queue:
     def __init__(self):
-        self.items = []
+        self.__elements = []
 
-    def encolar(self, item):
-        self.items.append(item)
+    def arrive(self, value: Any) -> None:
+        self.__elements.append(value)
 
-    def desencolar(self):
-        if not self.esta_vacia():
-            return self.items.pop(0)
+    def attention(self) -> Optional[Any]:
+        return self.__elements.pop(0) if self.__elements else None
 
-    def esta_vacia(self):
-        return len(self.items) == 0
+    def on_front(self) -> Optional[Any]:
+        return self.__elements[0] if self.__elements else None
 
-    def tamano(self):
-        return len(self.items)
+    def size(self) -> int:
+        return len(self.__elements)
 
-    def ver_primero(self):
-        if not self.esta_vacia():
-            return self.items[0]
-        
-class Pila:
+    def move_to_end(self) -> Optional[Any]:
+        if self.__elements:
+            value = self.attention()
+            self.arrive(value)
+            return value
+
+    def show(self):
+        for i in range(len(self.__elements)):
+            print(self.move_to_end())
+
+class Stack:
     def __init__(self):
-        self.items = []
+        self.__elements = []
 
-    def apilar(self, item):
-        self.items.append(item)
+    def push(self, value: Any) -> None:
+        self.__elements.append(value)
 
-    def desapilar(self):
-        if not self.esta_vacia():
-            return self.items.pop()
+    def pop(self) -> Optional[Any]:
+        return self.__elements.pop() if self.__elements else None
 
-    def esta_vacia(self):
-        return len(self.items) == 0
+    def size(self) -> int:
+        return len(self.__elements)
 
-    def tamano(self):
-        return len(self.items)
+    def on_top(self) -> Optional[Any]:
+        return self.__elements[-1] if self.__elements else None
 
-    def ver_tope(self):
-        if not self.esta_vacia():
-            return self.items[-1]
-
-
-def hora_en_minutos(hora_str):
-    h, m = map(int, hora_str.split(':'))
-    return h * 60 + m
-
-
-def eliminar_facebook(cola):
-    aux = Cola()
-    while not cola.esta_vacia():
-        notif = cola.desencolar()
-        if notif['aplicacion'].lower() != 'facebook':
-            aux.encolar(notif)
-    while not aux.esta_vacia():
-        cola.encolar(aux.desencolar())
+    def show(self):
+        aux_stack = Stack()
+        while self.size() > 0:
+            value = self.pop()
+            print(value)
+            aux_stack.push(value)
+        while aux_stack.size() > 0:
+            self.push(aux_stack.pop())
 
 
-def mostrar_twitter_python(cola):
-    aux = Cola()
-    while not cola.esta_vacia():
-        notif = cola.desencolar()
-        if notif['aplicacion'].lower() == 'twitter' and 'python' in notif['mensaje'].lower():
-            print(notif)
-        aux.encolar(notif)
-    while not aux.esta_vacia():
-        cola.encolar(aux.desencolar())
+notificaciones = Queue()
 
 
-def notificaciones_en_rango(cola, hora_inicio, hora_fin):
-    pila = Pila()
-    aux = Cola()
-    inicio = hora_en_minutos(hora_inicio)
-    fin = hora_en_minutos(hora_fin)
-
-    while not cola.esta_vacia():
-        notif = cola.desencolar()
-        hora_min = hora_en_minutos(notif['hora'])
-        if inicio <= hora_min <= fin:
-            pila.apilar(notif)
-        aux.encolar(notif)
-
-    while not aux.esta_vacia():
-        cola.encolar(aux.desencolar())
-
-    return pila.tamano()
-
-
-cola_notificaciones = Cola()
-notificaciones = [
-    {'hora': '11:45', 'aplicacion': 'Twitter', 'mensaje': 'Python es genial'},
-    {'hora': '12:30', 'aplicacion': 'Facebook', 'mensaje': 'Nuevo comentario'},
-    {'hora': '13:00', 'aplicacion': 'Instagram', 'mensaje': 'Nueva historia'},
-    {'hora': '14:50', 'aplicacion': 'Twitter', 'mensaje': 'Aprendé Python hoy'},
-    {'hora': '16:10', 'aplicacion': 'Facebook', 'mensaje': 'Nuevo amigo'},
-    {'hora': '10:30', 'aplicacion': 'Twitter', 'mensaje': 'Buenos días'},
+datos = [
+    {'hora': '10:15', 'app': 'Facebook', 'mensaje': 'Nuevo comentario en tu foto'},
+    {'hora': '11:45', 'app': 'Twitter', 'mensaje': 'Python es genial'},
+    {'hora': '12:30', 'app': 'Instagram', 'mensaje': 'Nuevo seguidor'},
+    {'hora': '13:00', 'app': 'Twitter', 'mensaje': '¡Mirá este hilo de Python!'},
+    {'hora': '14:15', 'app': 'Facebook', 'mensaje': 'Tienes recuerdos hoy'},
+    {'hora': '15:55', 'app': 'WhatsApp', 'mensaje': '¿Vamos al cine?'},
+    {'hora': '16:00', 'app': 'Twitter', 'mensaje': 'Sin mención a Python'},
 ]
 
-for notif in notificaciones:
-    cola_notificaciones.encolar(notif)
+for d in datos:
+    notificaciones.arrive(d)
+
+def eliminar_facebook(queue):
+    aux = Queue()
+    while queue.size() > 0:
+        n = queue.attention()
+        if n['app'] != 'Facebook':
+            aux.arrive(n)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
 
 
-print(">>> Notificaciones de Twitter que contienen 'Python':")
-mostrar_twitter_python(cola_notificaciones)
+def mostrar_twitter_python(queue):
+    aux = Queue()
+    print("Notificaciones de Twitter con 'Python':")
+    while queue.size() > 0:
+        n = queue.attention() 
+        if n['app'] == 'Twitter' and 'Python' in n['mensaje']:
+            print(n)
+        aux.arrive(n)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
 
 
-print("\n>>> Eliminando notificaciones de Facebook...")
-eliminar_facebook(cola_notificaciones)
+def notificaciones_en_rango(queue, hora_min, hora_max):
+    aux = Queue()
+    pila = Stack()
+    for _ in range(queue.size()):
+        n = queue.attention()
+        if hora_min <= n['hora'] <= hora_max:
+            pila.push(n)
+        aux.arrive(n)
+    while aux.size() > 0:
+        queue.arrive(aux.attention())
+    return pila
 
 
-print("\n>>> Cantidad de notificaciones entre 11:43 y 15:57:")
-cantidad = notificaciones_en_rango(cola_notificaciones, '11:43', '15:57')
-print("Cantidad:", cantidad)
+print("Cola original:")
+notificaciones.show()
+print("\nA) Eliminar notificaciones de Facebook:")
+eliminar_facebook(notificaciones)
+notificaciones.show()
+
+print("\nB) Mostrar notificaciones de Twitter con 'Python':")
+mostrar_twitter_python(notificaciones)
+
+print("\nC) Notificaciones entre 11:43 y 15:57:")
+pila = notificaciones_en_rango(notificaciones, '11:43', '15:57')
+print(f"Cantidad de notificaciones en rango: {pila.size()}")
+pila.show()
