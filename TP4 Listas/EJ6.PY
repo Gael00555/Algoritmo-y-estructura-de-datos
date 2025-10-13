@@ -28,18 +28,18 @@ superhero_list.add_criterion("biography", lambda sh: sh.biography)
 
 superhero_list.extend(
     [
-        Superhero("Linterna Verde", 1940, "DC", "Posee un anillo de poder y viste un traje especial."),
-        Superhero("Wolverine", 1974, "Marvel", "Tiene garras retráctiles y factor de curación."),
-        Superhero("Dr. Strange", 1963, "DC", "Usa magia y viste una túnica."),
-        Superhero("Iron Man", 1963, "Marvel", "Tony Stark usa una armadura de alta tecnología."),
-        Superhero("Capitana Marvel", 1968, "Marvel", "Tiene poderes cósmicos y un traje especial."),
-        Superhero("Mujer Maravilla", 1941, "DC", "Princesa amazona con traje de batalla."),
-        Superhero("Flash", 1940, "DC", "Corre a velocidades increíbles."),
-        Superhero("Star-Lord", 1976, "Marvel", "Usa una máscara y armadura espacial."),
-        Superhero("Batman", 1939, "DC", "Lucha contra el crimen con traje de murciélago."),
-        Superhero("Spider-Man", 1962, "Marvel", "Lleva un traje rojo y azul."),
-        Superhero("Magneto", 1963, "Marvel", "Controla el magnetismo y usa casco y armadura."),
-        Superhero("Superman", 1938, "DC", "Traje azul con capa roja."),
+        Superhero("Linterna Verde", 1940, "DC", "Guardián del universo que porta un anillo con poder ilimitado."),
+        Superhero("Wolverine", 1974, "Marvel", "Mutante con garras retráctiles y una capacidad de curación extraordinaria."),
+        Superhero("Dr. Strange", 1963, "DC", "Hechicero experto en las artes místicas, viste una capa encantada."),
+        Superhero("Iron Man", 1963, "Marvel", "Tony Stark combate el mal con su armadura tecnológica de última generación."),
+        Superhero("Capitana Marvel", 1968, "Marvel", "Heroína con energía cósmica y una fuerza sobrehumana."),
+        Superhero("Mujer Maravilla", 1941, "DC", "Guerrera amazona con armadura sagrada y lazo de la verdad."),
+        Superhero("Flash", 1940, "DC", "El hombre más veloz del mundo, capaz de romper la barrera del tiempo."),
+        Superhero("Star-Lord", 1976, "Marvel", "Líder de los Guardianes de la Galaxia, usa una máscara espacial y blásters."),
+        Superhero("Batman", 1939, "DC", "Vigilante de Gotham que utiliza su traje de murciélago para infundir miedo."),
+        Superhero("Spider-Man", 1962, "Marvel", "Joven héroe con poderes arácnidos y un traje rojo y azul."),
+        Superhero("Magneto", 1963, "Marvel", "Mutante que domina el magnetismo y porta un casco metálico."),
+        Superhero("Superman", 1938, "DC", "Héroe de Krypton, viste un traje azul con capa roja y el símbolo de la esperanza."),
     ]
 )
 
@@ -162,3 +162,4 @@ print("\n---- i) ----")
 counts = count_by_house(superhero_list)
 for casa, cantidad in counts.items():
     print(f"Cantidad {casa}: {cantidad}")
+
