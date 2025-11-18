@@ -128,5 +128,6 @@ for vertex in g:
     for edge in vertex.edges:
         if edge.weight == 9:
             episodios.append(vertex.value)
-print(f"f) Personajes que aparecieron en los nueve episodios de la saga: {episodios}")
+print(f"4) Personajes que aparecieron en los nueve episodios de la saga: {episodios}")
+
 
