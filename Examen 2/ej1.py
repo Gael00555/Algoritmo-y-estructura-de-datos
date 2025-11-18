@@ -3,14 +3,10 @@ from pokemons_data import pokemons
 
 arbol_nombre = BinaryTree()
 arbol_numero = BinaryTree()
-arbol_tipo = BinaryTree()
 
 for p in pokemons:
     arbol_nombre.insert(p["nombre"], p)
     arbol_numero.insert(p["numero"], p)
-    for t in p["tipo"]:
-        clave = t + "_" + p["nombre"]
-        arbol_tipo.insert(clave, p)
 
 def buscar_por_numero(numero):
     print(f"\n1) Pokémon con número {numero}:")
@@ -32,6 +28,7 @@ def buscar_por_nombre_prox(texto):
             _rec(root.right)
 
     _rec(arbol_nombre.root)
+
     if not resultados:
         print("No hubo coincidencias.")
     else:
@@ -40,37 +37,31 @@ def buscar_por_nombre_prox(texto):
 
 def listar_por_tipo(tipo):
     print(f"\n2) Pokémon del tipo {tipo}:")
-    tipo_pref = tipo + "_"
-
     def _rec(root):
         if root:
             _rec(root.left)
-            if isinstance(root.value, str) and root.value.startswith(tipo_pref):
+            if tipo in root.other_values["tipo"]:
                 print(root.other_values["nombre"])
             _rec(root.right)
 
-    _rec(arbol_tipo.root)
+    _rec(arbol_nombre.root)
 
 def listado_ordenado_numero():
     print("\n3) Listado ascendente por número:")
-
     def _rec(root):
         if root:
             _rec(root.left)
             print(root.value, "-", root.other_values["nombre"])
             _rec(root.right)
-
     _rec(arbol_numero.root)
 
 def listado_ordenado_nombre():
     print("\n3) Listado ascendente por nombre:")
-
     def _rec(root):
         if root:
             _rec(root.left)
             print(root.value)
             _rec(root.right)
-
     _rec(arbol_nombre.root)
 
 def listado_por_niveles():
@@ -116,7 +107,6 @@ def contar_por_tipo():
 
 def contar_mega():
     print("\n6) Cantidad de Pokémon con megaevolución:")
-
     def _rec(root):
         if root is None:
             return 0
@@ -127,7 +117,6 @@ def contar_mega():
 
 def contar_gigamax():
     print("\n7) Cantidad de Pokémon con forma gigamax:")
-
     def _rec(root):
         if root is None:
             return 0
@@ -135,6 +124,7 @@ def contar_gigamax():
         return contador + _rec(root.left) + _rec(root.right)
 
     print(_rec(arbol_nombre.root))
+
 
 buscar_por_numero(6)
 buscar_por_nombre_prox("char")
@@ -151,3 +141,4 @@ pokemons_debiles_a("Tyrantrum")
 contar_por_tipo()
 contar_mega()
 contar_gigamax()
+
