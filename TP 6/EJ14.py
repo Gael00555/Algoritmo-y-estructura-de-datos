@@ -3,9 +3,7 @@ from graph import Graph
 g = Graph(is_directed=False)
 
 
-# ==========================
-# a) Nodos (ambientes)
-# ==========================
+
 nodes_data = [
     ("cocina", "ambiente"),
     ("comedor", "ambiente"),
@@ -23,10 +21,6 @@ nodes_data = [
 for node, tipo in nodes_data:
     g.insert_vertex(node)
 
-
-# ==========================
-# b) Aristas (distancias)
-# ==========================
 
 edges_data = [
     ("cocina", "comedor", 4),
@@ -110,3 +104,4 @@ if peso_total is not None:
     print(f"Camino: {' -> '.join(camino_completo)} (Costo total: {peso_total} metros)")
 else:
     print("No existe camino entre habitación 1 y sala de estar.")
+
