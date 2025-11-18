@@ -40,7 +40,7 @@ edges_data = [
     ("quincho", "terraza", 18),
     ("quincho", "habitación 2", 10),
     ("quincho", "comedor", 12),
-    ("quincho", "cocina", 12),  # 5 conexiones
+    ("quincho", "cocina", 12),  
 
     ("baño 1", "habitación 1", 4),
     ("baño 1", "baño 2", 3),
@@ -104,4 +104,5 @@ if peso_total is not None:
     print(f"Camino: {' -> '.join(camino_completo)} (Costo total: {peso_total} metros)")
 else:
     print("No existe camino entre habitación 1 y sala de estar.")
+
 
