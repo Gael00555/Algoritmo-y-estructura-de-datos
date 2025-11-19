@@ -27,7 +27,6 @@ class Queue:
         for i in range(len(self.__elements)):
             print(self.move_to_end())
 
-# Cargar personajes en la cola
 mcu = Queue()
 datos = [
     {'personaje': 'Tony Stark', 'superheroe': 'Iron Man', 'genero': 'M'},
@@ -43,7 +42,7 @@ datos = [
 for p in datos:
     mcu.arrive(p)
 
-# Funciones
+
 
 def buscar_personaje_por_superheroe(queue, nombre_heroe):
     aux = Queue()
@@ -116,7 +115,7 @@ def verificar_carol_danvers(queue):
         queue.arrive(aux.attention())
     return encontrado, heroe
 
-# Ejecutar
+
 
 print("a) Nombre del personaje de la superhéroe 'Capitana Marvel':")
 resultado_a = buscar_personaje_por_superheroe(mcu, "Capitana Marvel")
@@ -141,3 +140,4 @@ if encontrado:
     print(f"Sí, su superhéroe es: {heroe}")
 else:
     print("No se encontró a Carol Danvers.")
+
